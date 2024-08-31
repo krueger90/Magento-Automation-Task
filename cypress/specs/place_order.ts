@@ -1,6 +1,7 @@
 import { Checkout } from "../page-object-model/Checkout";
 import { Login } from "../page-object-model/Login";
 import { Navigation } from "../page-object-model/Navigation";
+import { CART_WIDGET_PROCEED_TO_CHECKOUT_BTN } from "../support/constants";
 import { CY_ROUTES } from "../support/routes";
 
 const login = new Login();
@@ -20,5 +21,7 @@ describe('Place order flows', () => {
         navigation.navigateStoreMenu('#ui-id-6', '#ui-id-27');
         navigation.selectProduct(8);
         checkout.addToCart();
+        navigation.openMiniCart();
+        navigation.proceedToCheckout(CART_WIDGET_PROCEED_TO_CHECKOUT_BTN);
     })
 })

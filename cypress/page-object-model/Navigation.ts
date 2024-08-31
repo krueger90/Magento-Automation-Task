@@ -14,12 +14,16 @@ export class Navigation {
         cy.get('ol.products.list.items.product-items').children().eq(productPosition).click();
     }
 
-    proceedToCheckout(): void {
-
+    proceedToCheckout(button: string): void {
+        cy.get(button).click();
     }
 
     viewAndEditCart(): void {
+        cy.get('.action.viewcart').click();
+    }
 
+    openMiniCart(): void {
+        cy.get('.action.showcart').click();
     }
 
 }

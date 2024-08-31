@@ -9,7 +9,8 @@ Scenarios tackled, happy and negative flows:
     1. User registration
     2. User login
     3. Account updates
-    4. Checkout
+    4. Checkout with different quantities
+    5. Cart editing and checkout
 
 ## Pre-requirements
 
