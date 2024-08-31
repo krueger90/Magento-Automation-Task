@@ -1,21 +1,34 @@
-import { assertUrlContains } from "../asserts/generic-asserts";
-import { assertRegistrationSuccessMessage } from "../asserts/registration-asserts";
-import { RegisterUser } from "../page-object-model/RegisterUser";
+import { Asserts } from "../asserts/Asserts";
+import { RegisterUser } from "../page-object-model/Register";
+import { CY_ROUTES } from "../support/routes";
+import 'cypress-network-idle';
 
 const registerUser = new RegisterUser();
+const assert = new Asserts();
 
 
 beforeEach(() => {
     cy.visit('/');
+    cy.visit(CY_ROUTES.get('Create an Account'));
 });
 
 describe('Register User', () => {
 
     it('Navigate to the "Create an Account" page and register the user', () => {
-        cy.visit('/customer/account/create/');
         registerUser.fillRegistrationForm();
         registerUser.createAccount();
-        assertRegistrationSuccessMessage();
-        assertUrlContains("/customer/account");
+        assert.assertMessage('[data-ui-id=message-success]', 'Thank you for registering with Main Website Store.');
+        assert.assertUrlContains("/customer/account/");
+        cy.waitForNetworkIdle('+(POST|GET)', '*', 800, { log: false });
+        cy.fixture('registerUserData').then(registerUserData => {
+            assert.assertCustomerWelcome(registerUserData[0].firstName, registerUserData[0].lastName);
+        })
     });
+
+    it('Try to create account with existing email address', () => {
+        registerUser.fillRegistrationFormWithExistingAccount();
+        registerUser.createAccount();
+        assert.assertMessage('[data-ui-id=message-error]', 'There is already an account with this email address. ');
+        assert.assertUrlContains("/customer/account/create/");
+    })
 });
