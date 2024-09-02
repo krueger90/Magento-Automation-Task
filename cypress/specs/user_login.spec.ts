@@ -4,7 +4,6 @@ import { CY_ROUTES } from "../support/routes";
 import 'cypress-network-idle';
 
 const login = new Login();
-// const genericAsserts = new GenericAsserts();
 const assert = new Asserts(); 
 
 beforeEach(() => {

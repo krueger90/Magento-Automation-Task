@@ -23,8 +23,10 @@
     },
     "homepage": "https://github.com/krueger90/Magento-Automation-Task#readme",
     "devDependencies": {
-        "@bahmutov/cypress-esbuild-preprocessor": "^2.2.2",
+        "@badeball/cypress-cucumber-preprocessor": "^19.2.0",
+        "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
         "@faker-js/faker": "^8.4.1",
+        "@types/cypress-cucumber-preprocessor": "^4.0.5",
         "cypress": "^13.14.1",
         "cypress-network-idle": "^1.14.2",
         "mochawesome": "^7.1.3",

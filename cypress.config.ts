@@ -1,7 +1,7 @@
 import { defineConfig } from "cypress";
+let productDetails: string
 
-const config = {
-    chromeWebSecurity: false,
+export default defineConfig({
     viewportHeight: 1080,
     viewportWidth: 1920,
     retries: {
@@ -16,31 +16,30 @@ const config = {
         overwrite: false,
         html: false,
         json: true
-    }
-};
+    },
+    e2e: {
+        baseUrl: "https://magento.softwaretestingboard.com",
+        specPattern: ["cypress/specs/**/*.{cy,js,ts,spec}"],
+        supportFile: 'cypress/support/e2e.ts',
+        screenshotsFolder: "cypress/screenshots",
 
-config.e2e = {
-    baseUrl: "https://magento.softwaretestingboard.com",
-    specPattern: ["cypress/specs/**/*.{cy,js,ts,spec}"],
-    supportFile: 'cypress/support/e2e.ts',
-    screenshotsFolder: "cypress/screenshots",
-    setupNodeEvents(on, config) {
+        setupNodeEvents(on, config) {
 
-        //getter and setter for data stored in node process 
-        on('task', {
-            storeDetails: (value) => {
-                return (prodDetails = value)
-            },
-            getDetails: () => {
-                return prodDetails
-            }
-        })
+            //getter and setter for data stored in node process 
+            on('task', {
+                storeDetails: (value: any) => {
+                    return (productDetails = value)
+                },
+                getDetails: () => {
+                    return productDetails
+                },
+            })
 
-        on('before:browser:launch', (browser = {}, launchOptions) => {
-            launchOptions.args.push('--disable-dev-shm-usage', '--auto-open-devtools-for-tabs');
-            return launchOptions;
-        })
-        return config;
-    }
-}
-module.exports = defineConfig(config);
+            on('before:browser:launch', (browser, launchOptions) => {
+                launchOptions.args.push('--disable-dev-shm-usage');
+                return launchOptions;
+            })
+        },
+
+    },
+})
