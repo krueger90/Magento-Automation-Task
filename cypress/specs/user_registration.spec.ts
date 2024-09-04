@@ -2,10 +2,14 @@ import { Asserts } from "../asserts/Asserts";
 import { RegisterUser } from "../page-object-model/Register";
 import { CY_ROUTES } from "../support/routes";
 import 'cypress-network-idle';
+import { USERS } from '../support/generate-user';
 
 const registerUser = new RegisterUser();
 const assert = new Asserts();
 
+before(() => {
+    cy.writeFile('cypress/fixtures/registerUserData.json', USERS);
+})
 
 beforeEach(() => {
     cy.visit('/');

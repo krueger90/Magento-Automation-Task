@@ -36,7 +36,7 @@ export class Checkout {
             productDetails.productName = value.trim();
         });
         cy.get(PRODUCT_PRICE).invoke('text').then(value => {
-            productDetails.productPrice = value.trim();
+            productDetails.productPrice = value.replace(/^[\s\u00A0]+|[\s\u00A0]+$/g, '');
         });
         cy.get(PRODUCT_QUANTITY).invoke('val').then(value => {
             productDetails.productQuantity = value.toString();
@@ -44,11 +44,19 @@ export class Checkout {
         cy.task('storeDetails', productDetails);
     }
 
-    compareProductDetails(): void {
+    /**
+     * TODO: Refactor and try to compare product details after the info was saved in a file,
+     * by the saveProductDetails() method
+     */
+    checkProductDetails(): void {
         cy.task('getDetails').then(productDetails => {
             cy.get(CHECKOUT_PRODUCT_NAME).should('have.text', productDetails.productName);
-            cy.get(CHECKOUT_PRODUCT_PRICE).should('have.text', productDetails.productPrice);
-            cy.get(CHECKOUT_PRODUCT_QUANTITY).should('have.text', productDetails.productQuantity);
+            cy.get(CHECKOUT_PRODUCT_PRICE).invoke('text').then((text) => {
+                expect(text.trim()).to.equal(productDetails.productPrice);
+            });
+            cy.get(CHECKOUT_PRODUCT_QUANTITY).invoke('text').then((text) => {
+                expect(text).to.equal(productDetails.productQuantity);
+            })
         })
     }
 }

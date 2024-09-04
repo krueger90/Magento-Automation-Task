@@ -38,6 +38,6 @@ export const PRODUCT_NAME = '[class="page-title"]' ;
 export const PRODUCT_PRICE = '.price-box.price-final_price';
 export const PRODUCT_QUANTITY = '#qty';
 export const CHECKOUT_PRODUCT_NAME = '[class="product-item-name"]';
-export const CHECKOUT_PRODUCT_PRICE = '.cart-price';
-export const CHECKOUT_PRODUCT_QUANTITY = '[class="details-qty"]';
+export const CHECKOUT_PRODUCT_PRICE = '[class="cart-price"]';
+export const CHECKOUT_PRODUCT_QUANTITY = '.details-qty > .value';
 

@@ -18,7 +18,3 @@
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
-import {USERS} from './generate-user';
-before(() => {
-    cy.writeFile('cypress/fixtures/registerUserData.json', USERS);
-})

@@ -16,26 +16,29 @@ const assert = new Asserts();
 beforeEach(() => {
     cy.visit('/');
     cy.visit(CY_ROUTES.get('Sign In'));
+    login.fillLoginForm();
+    login.signIn();
+    navigation.clearCart();
 });
 
 describe('Place order flows', () => {
 
     it('Proceed to checkout, place order with 1 item, without a pre-existing shipping address', () => {
         cy.fixture('loginUserData').then((loginUserData)=>{
-            login.fillLoginForm();
-            login.signIn();
+            // navigation.clearCart();
+            cy.waitForNetworkIdle('+(POST|GET)', '*', 3000, { log: false });
             navigation.navigateStoreMenu('#ui-id-6', '#ui-id-27');
             navigation.selectProduct(8);
             checkout.saveProductDetails();
             checkout.addToCart();
-            cy.waitForNetworkIdle('+(POST|GET)', '*', 800, { log: false });
+            cy.waitForNetworkIdle('+(POST|GET)', '*', 2000, { log: false });
             navigation.openMiniCart();
             navigation.proceedToCheckout(CART_WIDGET_PROCEED_TO_CHECKOUT_BTN);
             cy.waitForNetworkIdle('+(POST|GET)', '*', 800, { log: false });
             assert.assertUrlContains('/checkout/#shipping');
             assertCheckout.assertNameInShippingStep(SHIPPING_FIRST_NAME,SHIPPING_LAST_NAME,loginUserData.firstName, loginUserData.lastName);
             checkout.fillShippingDetails(SHIPPING_ADDRESS_0,SHIPPING_CITY, MANDATORY_STATE, COUNTRY, ZIP, PHONE_NO);
-            checkout.compareProductDetails();
+            checkout.checkProductDetails();
         })
 
         it('View and edit cart, place order with same product, multiple quantity',()=>{

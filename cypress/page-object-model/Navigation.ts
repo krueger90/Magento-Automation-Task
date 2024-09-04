@@ -1,3 +1,5 @@
+import 'cypress-network-idle';
+
 export class Navigation {
 
     navigateStoreMenu(category: string, categorySection: string, categorySectionItem?: string): void {
@@ -19,11 +21,29 @@ export class Navigation {
     }
 
     viewAndEditCart(): void {
-        cy.get('.action.viewcart').click();
+        cy.get('.viewcart').click();
     }
 
     openMiniCart(): void {
-        cy.get('.action.showcart').click();
+        cy.get('.showcart').click();
     }
 
+    clearCart(): void {
+        cy.waitForNetworkIdle('+(POST|GET)', '*', 3000, { log: false });
+
+        cy.getAllLocalStorage().then((result) => {
+            let cacheStorage = JSON.parse(result["https://magento.softwaretestingboard.com"]["mage-cache-storage"].valueOf().toString());
+            let itemCount = cacheStorage["cart"]["summary_count"];
+
+            if (itemCount > 0) {
+                this.openMiniCart();
+                this.viewAndEditCart();
+                cy.get('tbody tr.item-actions').its('length').then(rows => {
+                    Cypress._.times(rows, () => {
+                        cy.get('tbody tr.item-actions').find('.action-delete').click();
+                    })
+                })
+            }
+        })
+    }
 }
