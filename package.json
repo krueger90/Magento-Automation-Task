@@ -4,7 +4,8 @@
     "description": "Magento Automation Task",
     "main": "index.js",
     "scripts": {
-        "cypress_headless": "npx cypress run",
+        "cypress:run-pipeline": "npx cypress run --quiet --headless --browser chrome --reporter mochawesome && npx mochawesome-merge \"cypress/reports/*.json\" -o cypress/reports/mochawesome.json && npx marge cypress/reports/mochawesome.json -f report -o cypress/reports/mocha",
+        "cypress:run-local": "rimraf cypress/reports & npx cypress run --quiet --headless --browser chrome --reporter mochawesome & npx mochawesome-merge \"cypress/reports/*.json\" -o cypress/reports/mochawesome.json & npx marge cypress/reports/mochawesome.json -f report -o cypress/reports/mocha",
         "cypress_ui": "npx cypress open"
     },
     "repository": {

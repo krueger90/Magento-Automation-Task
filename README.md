@@ -27,3 +27,11 @@ In order to run the Cypress tests in Docker, the following commands must be exec
 
 ## Tests
 
+Local test run: 
+
+* Headless mode, with test report generated: `npm run cypress:run-local`
+* UI mode: `npx cypress open`
+
+Docker:
+
+Run `docker-compose up` if the container is already created, if not, run `docker-compose build` first.
