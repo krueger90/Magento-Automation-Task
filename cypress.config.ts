@@ -55,7 +55,7 @@ export default defineConfig({
 
             on('before:browser:launch', (browser, launchOptions) => {
                 if (browser.family === 'chromium') {
-                    launchOptions.args.push('--no-sandbox', '--disable-dev-shm-usage', '--js-flags=--max-old-space-size=3500', '--disable-gpu', '--headless');
+                    launchOptions.args.push('--no-sandbox', '--disable-dev-shm-usage', '--js-flags=--max-old-space-size=3500', '--disable-gpu');
                     return launchOptions;
                 }
             })

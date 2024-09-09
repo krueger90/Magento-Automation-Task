@@ -32,63 +32,30 @@ export class CheckoutAsserts {
     }
 
     assertOrderSummary(): void {
-        // let shippingTax = 0;
-
-        // cy.task('getShippingTax').then(tax => {
-        //     cy.task('getCartItems').then(storedCartData => {
-        //         let calculatedSubTotal = 0;
-
-        //         storedCartData.forEach((item) => {
-        //             calculatedSubTotal += parseFloat(item.subTotal);
-        //         });
-        //         calculatedSubTotal = parseFloat(calculatedSubTotal.toFixed(2));
-        //         cy.get(ORDER_SUMMARY_TABLE).within(() => {
-        //             cy.get(ORDER_SUMMARY_PRICE).first().invoke('text').then((text) => {
-        //                 const displayedSubTotal = text.replace('$', '').trim();
-        //                 expect(displayedSubTotal).to.equal(calculatedSubTotal);
-        //             });
-
-        //             cy.get(ORDER_SUMMARY_SHIPPING_TAX).invoke('text').then((text) => {
-        //                 shippingTax = parseFloat(text.replace('$', '').trim());
-        //                 expect(shippingTax).to.equal(parseFloat(tax.replace('$', '').trim()));
-        //             });
-
-        //             cy.get(ORDER_SUMMARY_TOTAL).invoke('text').then((text) => {
-        //                 const orderTotal = calculatedSubTotal + shippingTax;
-        //                 const displayedGrandTotal = parseFloat(text.replace('$', '').trim());
-        //                 expect(displayedGrandTotal).to.equal(orderTotal);
-        //             });
-        //         });
-        //     });
-        // });
         let shippingTax = 0;
 
     cy.task('getShippingTax').then(tax => {
         cy.task('getCartItems').then(storedCartData => {
             let calculatedSubTotal = 0;
 
-            // Parse and sum each subTotal as a float to preserve decimals
             storedCartData.forEach((item) => {
-                calculatedSubTotal += parseFloat(item.subTotal); // Ensure subTotal is always treated as a float
+                calculatedSubTotal += parseFloat(item.subTotal); 
             });
 
-            // Use toFixed(2) to preserve two decimal places
             const formattedCalculatedSubTotal = calculatedSubTotal.toFixed(2);
 
             cy.get(ORDER_SUMMARY_TABLE).within(() => {
-                // Assert subtotal
+
                 cy.get(ORDER_SUMMARY_PRICE).first().invoke('text').then((text) => {
-                    const displayedSubTotal = parseFloat(text.replace('$', '').trim()).toFixed(2); // Ensure displayed subtotal is a float
+                    const displayedSubTotal = parseFloat(text.replace('$', '').trim()).toFixed(2);
                     expect(displayedSubTotal).to.equal(formattedCalculatedSubTotal);
                 });
 
-                // Assert shipping tax
                 cy.get(ORDER_SUMMARY_SHIPPING_TAX).invoke('text').then((text) => {
                     shippingTax = parseFloat(text.replace('$', '').trim());
                     expect(shippingTax).to.equal(parseFloat(tax.replace('$', '').trim()));
                 });
 
-                // Assert grand total
                 cy.get(ORDER_SUMMARY_TOTAL).invoke('text').then((text) => {
                     const orderTotal = (calculatedSubTotal + shippingTax).toFixed(2); // Calculate order total and format
                     const displayedGrandTotal = parseFloat(text.replace('$', '').trim()).toFixed(2);
