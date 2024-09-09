@@ -1,0 +1,18 @@
+services:
+  cypress:
+    build: .
+    container_name: cypress-tests
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    working_dir: /app
+    command: npx cypress run
+    networks:
+      - cypress_network
+
+networks:
+  cypress_network:
+    driver: bridge

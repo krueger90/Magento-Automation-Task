@@ -1,5 +1,8 @@
 import { defineConfig } from "cypress";
 let productDetails: string
+let tax: string
+let orderNumber: string
+let cartItems = [];
 
 export default defineConfig({
     viewportHeight: 1080,
@@ -8,8 +11,8 @@ export default defineConfig({
         runMode: 1,
         openMode: 0
     },
-    defaultCommandTimeout: 10000,
-    pageLoadTimeout: 60000,
+    defaultCommandTimeout: 60000,
+    pageLoadTimeout: 70000,
     reporter: 'mochawesome',
     reporterOptions: {
         reportDir: 'cypress/reports',
@@ -17,6 +20,7 @@ export default defineConfig({
         html: false,
         json: true
     },
+    experimentalMemoryManagement: true,
     e2e: {
         baseUrl: "https://magento.softwaretestingboard.com",
         specPattern: ["cypress/specs/**/*.{cy,js,ts,spec}"],
@@ -27,17 +31,33 @@ export default defineConfig({
 
             //getter and setter for data stored in node process 
             on('task', {
-                storeDetails: (value: any) => {
-                    return (productDetails = value)
+
+                setCartItems: (items) => {
+                    return cartItems = items;
                 },
-                getDetails: () => {
-                    return productDetails
+                getCartItems: () => {
+                    return cartItems;
                 },
+
+                storeShippingTax: (value: any) => {
+                    return (tax = value)
+                },
+                getShippingTax: () => {
+                    return tax
+                },
+                storeOrderNumber: (value: any) => {
+                    return (orderNumber = value)
+                },
+                getOrderNumber: () => {
+                    return orderNumber
+                }
             })
 
             on('before:browser:launch', (browser, launchOptions) => {
-                launchOptions.args.push('--disable-dev-shm-usage');
-                return launchOptions;
+                if (browser.family === 'chromium') {
+                    launchOptions.args.push('--no-sandbox', '--disable-dev-shm-usage', '--js-flags=--max-old-space-size=3500', '--disable-gpu');
+                    return launchOptions;
+                }
             })
         },
 

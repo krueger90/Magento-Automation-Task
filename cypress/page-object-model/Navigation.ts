@@ -1,4 +1,5 @@
 import 'cypress-network-idle';
+import { NEXT_BUTTON, PLACE_ORDER_BUTTON, PRODUCT_LIST } from '../support/constants';
 
 export class Navigation {
 
@@ -13,7 +14,7 @@ export class Navigation {
     }
 
     selectProduct(productPosition: number): void {
-        cy.get('ol.products.list.items.product-items').children().eq(productPosition).click();
+        cy.get(PRODUCT_LIST).children().eq(productPosition).click();
     }
 
     proceedToCheckout(button: string): void {
@@ -21,7 +22,7 @@ export class Navigation {
     }
 
     viewAndEditCart(): void {
-        cy.get('.viewcart').click();
+        cy.get('.viewcart').click({force: true});
     }
 
     openMiniCart(): void {
@@ -40,10 +41,18 @@ export class Navigation {
                 this.viewAndEditCart();
                 cy.get('tbody tr.item-actions').its('length').then(rows => {
                     Cypress._.times(rows, () => {
-                        cy.get('tbody tr.item-actions').find('.action-delete').click();
+                        cy.get('tbody tr.item-actions').find('.action-delete').first().click();
                     })
                 })
             }
         })
+    }
+
+    clickNextButton(): void {
+        cy.get(NEXT_BUTTON).click();
+    }
+
+    clickPlaceOrderButton(): void {
+        cy.get(PLACE_ORDER_BUTTON).click();
     }
 }

@@ -1,5 +1,5 @@
-import { ADD_TO_CART_BTN, CHECKOUT_PRODUCT_NAME, CHECKOUT_PRODUCT_PRICE, CHECKOUT_PRODUCT_QUANTITY, COUNTRY, MANDATORY_STATE, OPTIONAL_STATE, PHONE_NO, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_QUANTITY, REGION_FIELD, SHIPPING_ADDRESS_0, SHIPPING_CITY, ZIP } from "../support/constants";
-import { faker, fakerRO } from "@faker-js/faker";
+import { ADD_TO_CART_BTN, CHECKOUT_PRODUCT_PRICE, EXISTING_ADDRESS_SELECTED, NEW_ADDRESS_POPUP, ORDER_NUMBER, SAVE_ADDRESS_BTN, SAVE_ADDRESS_CHECKBOX, SHOPPING_CART_ITEM_NAME, SHOPPING_CART_ITEM_QTY, SHOPPING_CART_ITEM_SUBTOTAL, SHOPPING_CART_TABLE_ITEM_INFO, UPDATE_CART_BTN } from "../support/constants";
+import { fakerRO } from "@faker-js/faker";
 
 export class Checkout {
 
@@ -8,16 +8,21 @@ export class Checkout {
     }
 
     // TODO: Find a way to make state selection dynamic, depending on the selected country
-    fillShippingDetails(streetSelector: string, citySelector: string, stateSelector: string, zipSelector: string, countrySelector: string, phoneSelector: string, addressType?: string): void {
+    fillShippingDetails(addressType: string, countrySelector?: string, citySelector?: string, stateSelector?: string, streetSelector?: string, zipSelector?: string, phoneSelector?: string): void {
         if (addressType === "existing") {
-
+            cy.get(EXISTING_ADDRESS_SELECTED).should('be.visible');
+            return;
         } else {
-            cy.get(SHIPPING_ADDRESS_0).type(fakerRO.location.streetAddress());
-            cy.get(COUNTRY).select('Romania');
-            cy.get(SHIPPING_CITY).type('Arad');
-            cy.get(MANDATORY_STATE).select('Arad');
-            cy.get(ZIP).type(fakerRO.location.zipCode());
-            cy.get(PHONE_NO).type(faker.phone.number());
+            cy.get(NEW_ADDRESS_POPUP).click();
+            cy.get(countrySelector).select('Romania');
+
+            cy.get(stateSelector).select('Arad');
+            cy.get(citySelector).type('Arad');
+            cy.get(streetSelector).type(fakerRO.location.streetAddress());
+            cy.get(zipSelector).type(fakerRO.location.zipCode());
+            cy.get(phoneSelector).type('+407250006008');
+            cy.get(SAVE_ADDRESS_CHECKBOX).uncheck();
+            cy.get(SAVE_ADDRESS_BTN).click();
         }
     }
 
@@ -25,38 +30,69 @@ export class Checkout {
      *Creates an object containing the product details 
      *and stores it in the Node process to be retrieved later  
      */
-    saveProductDetails(): void {
-        const productDetails = {
-            productName: "",
-            productPrice: "",
-            productQuantity: ""
-        }
+    saveCartDetails(): void {
+        let cartData: any[] = [];
 
-        cy.get(PRODUCT_NAME).invoke('text').then(value => {
-            productDetails.productName = value.trim();
+        cy.get(SHOPPING_CART_TABLE_ITEM_INFO).each(($row) => {
+            cy.wrap($row).within(() => {
+                cy.get(SHOPPING_CART_ITEM_QTY).invoke('val').then((val) => {
+                    const productQuantity = parseInt(val.toString());
+
+                    cy.get(SHOPPING_CART_ITEM_NAME).invoke('text').then((nameText) => {
+                        const productName = nameText.trim();
+
+                        cy.get(CHECKOUT_PRODUCT_PRICE).first().invoke('text').then((priceText) => {
+                            const productPrice = priceText.replace('$', '').trim();
+
+                            cy.get(SHOPPING_CART_ITEM_SUBTOTAL).invoke('text').then((subTotalText) => {
+                                const productSubTotal = subTotalText.replace('$', '').trim();
+
+                                const productDetails = {
+                                    name: productName,
+                                    price: productPrice,
+                                    quantity: productQuantity,
+                                    subTotal: productSubTotal
+                                };
+
+                                cartData.push(productDetails);
+                            });
+                        });
+                    });
+                });
+            });
+        }).then(() => {
+            cy.task('setCartItems', cartData);
         });
-        cy.get(PRODUCT_PRICE).invoke('text').then(value => {
-            productDetails.productPrice = value.replace(/^[\s\u00A0]+|[\s\u00A0]+$/g, '');
-        });
-        cy.get(PRODUCT_QUANTITY).invoke('val').then(value => {
-            productDetails.productQuantity = value.toString();
-        });
-        cy.task('storeDetails', productDetails);
     }
 
-    /**
-     * TODO: Refactor and try to compare product details after the info was saved in a file,
-     * by the saveProductDetails() method
-     */
-    checkProductDetails(): void {
-        cy.task('getDetails').then(productDetails => {
-            cy.get(CHECKOUT_PRODUCT_NAME).should('have.text', productDetails.productName);
-            cy.get(CHECKOUT_PRODUCT_PRICE).invoke('text').then((text) => {
-                expect(text.trim()).to.equal(productDetails.productPrice);
-            });
-            cy.get(CHECKOUT_PRODUCT_QUANTITY).invoke('text').then((text) => {
-                expect(text).to.equal(productDetails.productQuantity);
+    saveShippingTax(): void {
+        const tax = {
+            shippingTax: ""
+        }
+        cy.waitForNetworkIdle('+(POST|GET)', '*', 2000, { log: false });
+        cy.get('tbody tr').each((row) => {
+            cy.wrap(row).find('td').then((cells) => {
+                if (cells.length > 0) {
+                    cy.task('storeShippingTax', tax.shippingTax = cells.eq(1).text().trim());
+                }
             })
         })
+    }
+
+    saveOrderNumber(): void {
+        const orderNo = {
+            orderNumber: ""
+        }
+        cy.get(ORDER_NUMBER).invoke('text').then((text) => {
+            cy.task('storeOrderNumber', orderNo.orderNumber = text);
+        })
+    }
+
+    modifyQuantity(selector: string, quantity: string): void {
+        cy.get(selector).click().clear().type(quantity);
+    }
+
+    clickUpdateCart(): void {
+        cy.get(UPDATE_CART_BTN).click();
     }
 }
