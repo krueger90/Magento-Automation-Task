@@ -10,12 +10,14 @@ export const REG_CONFIRM_PASSWORD_INPUT = '#password-confirmation';
 
 /**
  * Login form inputs
+ * @constant
  */
 export const LOGIN_EMAIL_ADDRESS_INPUT = '#email';
 export const LOGIN_PASSWORD_INPUT = '#pass';
 
 /**
  * Checkout flow related elements
+ * @constant
  */
 export const ADD_TO_CART_BTN = '#product-addtocart-button';
 export const CART_PROCEED_TO_CHECKOUT_BTN = '[data-role="proceed-to-checkout"]';
@@ -50,6 +52,7 @@ export const UPDATE_CART_BTN = 'button.action.update';
 
 /**
  * Product details elements
+ * @constant
  */
 export const PRODUCT_NAME = '[class="page-title"]' ;
 export const PRODUCT_PRICE = '.price-box.price-final_price';
