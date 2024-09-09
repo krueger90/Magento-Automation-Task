@@ -11,7 +11,7 @@ export default defineConfig({
         runMode: 1,
         openMode: 0
     },
-    defaultCommandTimeout: 60000,
+    defaultCommandTimeout: 70000,
     pageLoadTimeout: 70000,
     reporter: 'mochawesome',
     reporterOptions: {

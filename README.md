@@ -14,7 +14,7 @@ Scenarios tackled:
 ## Pre-requirements
 
 * I used versions v20.10.0 and 10.2.3 of Node.js and npm respectively. The Cypress minimum  
-requirement for Node.js is 18.x. You can use the same or later versions.
+requirement for Node.js is 18.x. You can use the same or later versions. This is required if you want to run the tests locally, otherwise Docker would suffice.
 * Docker Desktop for Windows, Mac, or Docker and Docker Compose for Linux
 
 
