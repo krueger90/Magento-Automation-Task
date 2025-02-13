@@ -8,5 +8,5 @@ function createRandomUser() {
         password: faker.internet.password(),
     };
 }
-
+// can specify how many users to be created (count param)
 export const USERS = faker.helpers.multiple(createRandomUser, { count: 1 });
